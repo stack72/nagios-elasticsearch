@@ -9,18 +9,6 @@ try:
 except ImportError:
     import simplejson as json
 
-HEALTH_MAP = {0: 'critical',
-              1: 'warning',
-              2: 'ok'}
-
-HEALTH = {'red':    0,
-          'yellow': 1,
-          'green':  2}
-
-RED    = HEALTH['red']
-YELLOW = HEALTH['yellow']
-GREEN  = HEALTH['green']
-
 class ESClusterHealthCheck(NagiosCheck):
 
   def __init__(self):
