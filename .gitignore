@@ -1,0 +1,4 @@
+build/
+dist/
+venv/
+nagios_elasticsearch.egg-info/
