@@ -9,47 +9,41 @@ try:
 except ImportError:
     import simplejson as json
 
-parser = optparse.OptionParser()
-parser.add_option('-E','--expected_nodes_in_cluster', dest='nodes_in_cluster')
-parser.add_option('-H','--host', dest='host')
-parser.add_option('-P','--port', dest='port')
-(opts, args) = parser.parse_args()
+class ESNodesCheck(NagiosCheck):
 
-mandatories = ['nodes_in_cluster', 'host']
-for m in mandatories:
-  if not opts.__dict__[m]:
-    print "mandatory parameter is missing\n"
-    exit(-1)
+  def __init__(self):
 
-def get_json(uri):
+    NagiosCheck.__init__(self)
+
+    self.add_option('E','expected_nodes_in_cluster', 'nodes_in_cluster', 'This is the expected number of nodes in the cluster')
+    self.add_option('H','host', 'host', 'The cluster to check')
+    self.add_option('P','port', 'port', 'The ES port - defaults to 9200')
+
+  def check(self, opts, args):
+    host = opts.host
+    port = int(opts.port or '9200')
+    nodes_in_cluster = int(opts.nodes_in_cluster)
+
     try:
-        response = urllib2.urlopen(uri)
+      response = urllib2.urlopen(r'http://%s:%d/_cluster/health' %(host, port))
     except urllib2.HTTPError, e:
-        raise Status('unknown', ("API failure", None, "API failure:\n\n%s" % str(e)))
+      raise Status('unknown', ("API failure", None, "API failure:\n\n%s" % str(e)))
     except urllib2.URLError, e:
-        raise Status('critical', (e.reason))
+      raise Status('critical', (e.reason))
 
     response_body = response.read()
 
     try:
-        json_rep = json.loads(response_body)
+      es_cluster_health = json.loads(response_body)
     except ValueError:
-        raise Status('unknown', ("API returned nonsense",))
+      raise Status('unknown', ("API returned nonsense",))
 
-    return json_rep
+    active_cluster_nodes = es_cluster_health['number_of_nodes']
 
-def main():
-  host = opts.host
-  port = int(opts.port or '9200')
-  nodes_in_cluster = int(opts.nodes_in_cluster)
+    if active_cluster_nodes != nodes_in_cluster:
+      raise Status('CRITICAL', "The number of nodes in the cluster is not '%s'" %es_cluster_health['number_of_nodes'])
+    else:
+      raise Status('OK', "The number of nodes in the cluster is as expected")
 
-  es_cluster_health = get_json(r'http://%s:%d/_cluster/health' %(host, port))
-
-  active_cluster_nodes = es_cluster_health['number_of_nodes']
-
-  if active_cluster_nodes != nodes_in_cluster:
-    raise Status('CRITICAL', "The number of nodes in the cluster is not '%s'" %es_cluster_health['number_of_nodes'])
-  else:
-    raise Status('OK', "The number of nodes in the clust is good")
-
-if __name__ == "__main__":main()
+if __name__ == "__main__":
+  ESNodesCheck().run()
