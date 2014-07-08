@@ -19,9 +19,11 @@ class ESJVMHealthCheck(NagiosCheck):
         self.add_option('H', 'host', 'host', 'The cluster to check')
         self.add_option('P', 'port', 'port', 'The ES port - defaults to 9200')
         self.add_option('C', 'critical_threshold', 'critical_threshold',
-                        'The level at which we throw a CRITICAL alert')
+                        'The level at which we throw a CRITICAL alert'
+                        ' - defaults to 97% of the JVM setting')
         self.add_option('W', 'warning_threshold', 'warning_threshold',
-                        'The level at which we throw a WARNING alert')
+                        'The level at which we throw a WARNING alert'
+                        ' - defaults to 85% of the JVM setting')
 
     def check(self, opts, args):
         host = opts.host
