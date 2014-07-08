@@ -2,6 +2,9 @@
 
 A few simple scripts for checking the state of your [ElasticSearch] cluster using Nagios the  endpoints of ElasticSearch
 
+[![Build
+Status](https://secure.travis-ci.org/opentable/nagios-elasticsearch.png)](https://secure.travis-ci.org/opentable/nagios-elasticsearch.png)
+
 ##How they work
 
 These plugins work by submitting API requests to a local or remote
