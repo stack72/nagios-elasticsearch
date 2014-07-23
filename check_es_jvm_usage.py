@@ -23,13 +23,13 @@ class ESJVMHealthCheck(NagiosCheck):
                         ' - defaults to 97% of the JVM setting')
         self.add_option('W', 'warning_threshold', 'warning_threshold',
                         'The level at which we throw a WARNING alert'
-                        ' - defaults to 85% of the JVM setting')
+                        ' - defaults to 90% of the JVM setting')
 
     def check(self, opts, args):
         host = opts.host
         port = int(opts.port or '9200')
         critical = int(opts.critical_threshold or '97')
-        warning = int(opts.warning_threshold or '85')
+        warning = int(opts.warning_threshold or '90')
 
         try:
             response = urllib2.urlopen(r'http://%s:%d/_nodes/stats/jvm'
@@ -48,8 +48,9 @@ class ESJVMHealthCheck(NagiosCheck):
             raise Status('unknown', ("API returned nonsense",))
 
         criticals = 0
+        critical_details = []
         warnings = 0
-        msg_details = []
+        warning_details = []
 
         nodes = nodes_jvm_data['nodes']
         for node in nodes:
@@ -57,23 +58,31 @@ class ESJVMHealthCheck(NagiosCheck):
             node_name = nodes[node]['host']
             if int(jvm_percentage) >= critical:
                 criticals = criticals + 1
-                msg_details.append("Node %s has breached a critical threshold"
-                                   % (node_name))
+                critical_details.append("%s currently running at %s%% JVM mem "
+                                        % (node_name, jvm_percentage))
             elif (int(jvm_percentage) >= warning and
                   int(jvm_percentage) < critical):
                 warnings = warnings + 1
-                msg_details.append("Node %s has breached a warning threshold"
-                                   % (node_name))
+                warning_details.append("%s currently running at %s%% JVM mem "
+                                       % (node_name, jvm_percentage))
 
         if criticals > 0:
             raise Status("Critical",
-                         "Cluster status is in critical condition",
-                         " ".join(msg_details))
+                         "There are '%s' node(s) in the cluster that have "
+                         "breached the %% JVM mem usage critical threshold of "
+                         "%s%%. They are:\r\n%s"
+                         % (criticals, critical,
+                            str("\r\n".join(critical_details))))
         elif warnings > 0:
-            raise Status("Warning", "Cluster health is in a warning state",
-                         "\r\n".join(msg_details))
+            raise Status("Warning",
+                         "There are '%s' node(s) in the cluster that have "
+                         "breached the %% JVM mem usage warning threshold of "
+                         "%s%%. They are:\r\n%s"
+                         % (warnings, warning,
+                            str("\r\n".join(warning_details))))
         else:
-            raise Status("OK", "Cluster health is good")
+            raise Status("OK", "All nodes in the cluster are currently below "
+                         "the % JVM mem warning threshold")
 
 if __name__ == "__main__":
     ESJVMHealthCheck().run()

@@ -45,10 +45,12 @@ class ESNodesCheck(NagiosCheck):
         active_cluster_nodes = es_cluster_health['number_of_nodes']
 
         if active_cluster_nodes != nodes_in_cluster:
-            raise Status('CRITICAL', "Number of nodes in the cluster is not %s"
-                         % (active_cluster_nodes))
+            raise Status('CRITICAL', "Number of nodes in the cluster is "
+                         "reporting as '%s' but we expected '%s'"
+                         % (active_cluster_nodes, nodes_in_cluster))
         else:
-            raise Status('OK', "Number of nodes in the cluster is as expected")
+            raise Status('OK', "Number of nodes in the cluster is '%s' as "
+                         "expected" % (nodes_in_cluster))
 
 if __name__ == "__main__":
     ESNodesCheck().run()
