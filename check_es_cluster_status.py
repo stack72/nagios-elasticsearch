@@ -48,7 +48,8 @@ class ESClusterHealthCheck(NagiosCheck):
             raise Status("WARNING", "Cluster status is currently reporting as"
                          "Yellow")
         else:
-            raise Status("OK", "Cluster status is currently reporting as Green")
+            raise Status("OK",
+                    "Cluster status is currently reporting as Green")
 
 if __name__ == "__main__":
     ESClusterHealthCheck().run()
