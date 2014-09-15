@@ -69,10 +69,13 @@ class ESJVMHealthCheck(NagiosCheck):
         if criticals > 0:
             raise Status("Critical",
                          "There are '%s' node(s) in the cluster that have "
-                         "breached the %% JVM mem usage critical threshold of "
-                         "%s%%. They are:\r\n%s"
-                         % (criticals, critical,
-                            str("\r\n".join(critical_details))))
+                         "breached the %% JVM heap usage critical threshold "
+                         "of %s%%. They are:\r\n%s"
+                         % (
+                             criticals,
+                             critical,
+                             critical_details.join("\r\n")
+                             ))
         elif warnings > 0:
             raise Status("Warning",
                          "There are '%s' node(s) in the cluster that have "
