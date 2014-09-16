@@ -74,7 +74,7 @@ class ESJVMHealthCheck(NagiosCheck):
                          % (
                              criticals,
                              critical,
-                             critical_details.join("\r\n")
+                             str("\r\n".join(critical_details))
                              ))
         elif warnings > 0:
             raise Status("Warning",
