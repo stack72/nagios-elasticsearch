@@ -9,7 +9,7 @@ setup(
     name="nagios-elasticsearch",
     description="A selection of Nagios plugins to monitor ElasticSearch.",
     long_description=open('README.md').read(),
-    version="0.1",
+    version="0.1.1",
     packages=find_packages(),
     author='Paul Stack',
     author_email='public@paulstack.co.uk',
