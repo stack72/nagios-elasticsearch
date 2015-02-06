@@ -29,8 +29,8 @@ class ESSplitBrainCheck(NagiosCheck):
         for node in nodes:
             try:
                 response = urllib2.urlopen(
-                            r'http://%s:%d/_cluster/state/nodes,master_node/'
-                            % (node, port))
+                        r'http://%s:%d/_cluster/state/nodes,master_node/'
+                        % (node, port))
                 response_body = response.read()
                 response = json.loads(response_body)
             except (urllib2.HTTPError, urllib2.URLError), e:
@@ -52,8 +52,10 @@ class ESSplitBrainCheck(NagiosCheck):
                         "%s" % (str("\r\n".join(failed_nodes))))
         elif len(masters) != 1:
             raise Status('Critical', "%d masters (%s) found in %s cluster"
-                        % (len(masters), str(", ".join(masters)), cluster_name)
-                        )
+                         % (len(masters),
+                            str(", ".join(masters)), cluster_name
+                            )
+                         )
         else:
             if len(failed_nodes) == 0:
                 raise Status('OK', "%d/%d nodes have same master"
