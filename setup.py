@@ -8,7 +8,7 @@ def parse_requirements(filename):
 setup(
     name="nagios-elasticsearch",
     description="A selection of Nagios plugins to monitor ElasticSearch.",
-    long_description=open('README.md').read(),
+    long_description=open('README.rst').read(),
     version="0.1.1",
     packages=find_packages(),
     author='Paul Stack',
