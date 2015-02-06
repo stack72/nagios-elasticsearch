@@ -14,7 +14,7 @@ setup(
     packages=find_packages(),
     author='Paul Stack',
     author_email='public@paulstack.co.uk',
-    url="https://github.com/opentable/nagios-elasticsearch",
+    url="https://github.com/stack72/nagios-elasticsearch",
     download_url='http://github.com/stack72/nagios-elasticsearch/tarball/0.1.2',
     scripts=["check_es_nodes.py",
              "check_es_cluster_status.py",
