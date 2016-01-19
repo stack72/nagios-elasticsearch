@@ -42,10 +42,10 @@ class ESClusterHealthCheck(NagiosCheck):
         cluster_status = es_cluster_health['status'].lower()
 
         if cluster_status == 'red':
-            raise Status("CRITICAL", "Cluster status is currently reporting as"
+            raise Status("CRITICAL", "Cluster status is currently reporting as "
                          "Red")
         elif cluster_status == 'yellow':
-            raise Status("WARNING", "Cluster status is currently reporting as"
+            raise Status("WARNING", "Cluster status is currently reporting as "
                          "Yellow")
         else:
             raise Status("OK",
